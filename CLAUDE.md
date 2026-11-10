@@ -9,7 +9,7 @@ was taken.
 ## State
 
 0.1.0 built 2026-11-10 on the work machine against a mirror (below). **Never run in game.**
-Verified outside the game: 0-warning build, 113 xunit tests (decision table, prefab geometry at 14
+Verified outside the game: 0-warning build, 113 xunit tests (138 from 0.1.2) (decision table, prefab geometry at 14
 screen sizes, metadata of the patched assembly), and tools/PatchHarness in the game's own mono
 runtime (all four patches apply with BepInEx's Harmony 2.9; decision glue on real controller types
 for every screen kind). Next step: Joel runs docs/TEST-PLAN.md.
@@ -17,7 +17,10 @@ for every screen kind). Next step: Joel runs docs/TEST-PLAN.md.
 Repo https://github.com/JoelHauser/healthyinventory.git (public), `main`. 0.1.0 and 0.1.1 are
 GitHub **pre-releases** (tags `v0.1.0`, `v0.1.1`) with their zips. 0.1.1 = two robustness fixes in
 HealthColumn (combined flag set before the panel moves; no `?.` on a Transform) plus the CutContent
-compatibility reading below; behaviour otherwise identical. Neither has been run in game. Commit as `Joel Hauser <jhauser@bostonlightsource.com>`;
+compatibility reading below; behaviour otherwise identical. 0.1.2 (built 2026-11-10, not yet committed or
+released when written) adds the layout report (HealthColumn.Report.cs: one log block with every rect in
+canvas units and Rules.Inside/Overlaps checks on every visible graphic, first combined open per session
+and after a resize, two frames late) plus the Fika and scav-raid readings below. None has been run in game. Commit as `Joel Hauser <jhauser@bostonlightsource.com>`;
 write commit messages and release notes to a file (UTF-8 without BOM) and use `-F` / `--notes-file`.
 
 ## The design in one paragraph
@@ -82,6 +85,20 @@ its required DrakiaXYZ Search Open Containers 1.5.0. No conflict found:
 - Nothing finds health UI by transform path. Its UiTuner (dev tool) takes the first active
   HealthParametersPanel, which may now be the column's.
 
+## Fika and scav raids (read 2026-11-10)
+
+- The only `new RaidInventoryScreenController` in Assembly-CSharp (Cecil scan of newobj) is in
+  `EftGamePlayerOwner.ShowInventoryScreen`; no side check, so PMC and scav raids are the same path.
+  `InventoryScreen` passes `ScreenController.InRaid` as ItemsPanel's `inRaid`. Other controllers:
+  Lobby/Matchmaking (MainMenuShowOperation), Scavenger (transfer), Hideout.
+- Fika-Plugin v2.4.6 (commit 9572504): `CoopGame : BaseLocalGame<EftGamePlayerOwner>`, so the same
+  path. No patch on InventoryScreen, ItemsPanel or health UI. Local player `ClientHealthController :
+  PlayerHealthController` (Diagnostics walks base types; harness covers PlayerHealthController).
+  ReviveInteractable opens a teammate via ShowInventoryScreenLoot (loot item, so Looting). Its
+  revive patch skips Kill (no DiedEvent) while downed; the inventory then just stays open.
+- Prebuilding the column at raid start was considered and dropped: For() makes two empty objects and
+  copies two small decorations; the first Show cost is the vanilla panel's own.
+
 ## Building on the work machine
 
 `C:\HUH` (SPT 4.1.6, EFT 0.16.9.40743) is unpatched, never launched, and must stay untouched. The
@@ -94,7 +111,7 @@ Patched is 16,233,472 bytes. 0.1.0 used a mirror copied from a FirstShotSmoothne
 whose `.spt-bak` hashed identical to C:\HUH's DLL (SHA-256 43A539F5...).
 
 ```
-scripts\pack.ps1 -SPTPath <mirror>                      # build, 113 tests, reference check, zip
+scripts\pack.ps1 -SPTPath <mirror>                      # build, 138 tests, reference check, zip
 scripts\run-harness.ps1 -SPTPath <mirror> -Mono C:\HUH\MonoBleedingEdge -Work <empty dir>
 ```
 

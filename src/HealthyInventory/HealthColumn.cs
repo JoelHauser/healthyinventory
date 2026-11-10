@@ -19,7 +19,7 @@ namespace HealthyInventory
     /// whole game session. Nothing here searches the scene; every object is reached from the
     /// ItemsPanel's own serialized fields and their parents.
     /// </summary>
-    internal sealed class HealthColumn : MonoBehaviour
+    internal sealed partial class HealthColumn : MonoBehaviour
     {
         private const string HostName = "HealthyInventory Health Column";
 
@@ -213,6 +213,7 @@ namespace HealthyInventory
             if (Plugin.VerboseLog.Value)
                 Plugin.Log.LogInfo($"Combined layout on: health column {_hostSize.x:0}x{_hostSize.y:0}, panel {_design.x:0}x{_design.y:0} at scale {_scale:0.###}. " +
                                    $"Opens {Begins}, closes {Ends}. {Diagnostics.HandlerSummary(health)}");
+            if (!_reportedThisSession) ScheduleReport("first combined open this session");
         }
 
         /// <summary>Hand the panel back to Left Panel exactly as it was. Safe to call twice.</summary>
@@ -239,6 +240,7 @@ namespace HealthyInventory
             t.anchorMin = _oAnchorMin; t.anchorMax = _oAnchorMax; t.pivot = _oPivot;
             t.offsetMin = _oOffsetMin; t.offsetMax = _oOffsetMax; t.localScale = _oScale;
             _origParent = null;
+            _reportIn = 0;   // a report is only meaningful while combined
 
             if (gameObject.activeSelf) gameObject.SetActive(false);
 
@@ -293,7 +295,9 @@ namespace HealthyInventory
                 Relayout();
                 if (Plugin.VerboseLog.Value)
                     Plugin.Log.LogInfo($"Layout changed; health column now {_hostSize.x:0}x{_hostSize.y:0}, scale {_scale:0.###}.");
+                ScheduleReport("size changed");
             }
+            PumpReport();   // one int compare unless a report is due
         }
 
         private void Relayout()

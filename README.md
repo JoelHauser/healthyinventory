@@ -10,7 +10,7 @@ It only appears there. Looting a body, a container or a loose bag shows the norm
 and its full loot space. The stash, hideout, main menu, traders and every out-of-raid screen are
 untouched. The Health tab itself still works as before.
 
-**Status: 0.1.1, built and tested outside the game, not yet run in game.** See
+**Status: 0.1.2, built and tested outside the game, not yet run in game.** See
 [docs/TEST-PLAN.md](docs/TEST-PLAN.md).
 
 ## Requirements
@@ -27,7 +27,7 @@ Extract the zip into the SPT folder, so that `BepInEx/plugins/HealthyInventory.d
 | --- | --- | --- |
 | Show health beside gear in raid | on | Off restores the vanilla layout at once. |
 | Column background and frame | on | Draws the gear column's own background, bottom strip and border behind the health column. |
-| Log layout decisions | on | One line per inventory open in `BepInEx/LogOutput.log`, for testing. |
+| Log layout decisions | on | One line per inventory open in `BepInEx/LogOutput.log`, plus a layout report (every rectangle, and a check that nothing clips or overlaps) on the first open of a session and after a resize. For testing. |
 
 ## How it works
 
@@ -57,7 +57,9 @@ open. There is no UI-scale setting in this EFT version to account for.
 - Mods that rebuild the inventory screen's layout: if the panels are not where the game puts them,
   the mod logs a warning and leaves the inventory vanilla.
 - Container windows you open float over the health column, as they float over the loot panel.
-- **Fika:** not tested.
+- **Fika 2.4.6:** no overlapping hooks found by reading its code; not yet run together. Raids under
+  Fika open the inventory through the same game code as single-player ones.
+- **Scav raids** work the same as PMC raids (same game code path).
 
 ## Known limitations
 

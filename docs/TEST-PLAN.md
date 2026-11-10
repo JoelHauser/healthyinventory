@@ -1,14 +1,14 @@
 # Healthy Inventory: in-game test plan
 
-Version 0.1.1 has **never been run in game**. Everything below is still to be checked. Numbers in
+Version 0.1.2 has **never been run in game**. Everything below is still to be checked. Numbers in
 brackets refer to the brief's eight validation points.
 
 ## Setup
 
-1. Install `releases/HealthyInventory-0.1.1.zip` into the live SPT install (`H:\SPT4.1.X`), or
+1. Install `releases/HealthyInventory-0.1.2.zip` into the live SPT install (`H:\SPT4.1.X`), or
    `scripts\pack.ps1 -SPTPath H:\SPT4.1.X -InstallTo H:\SPT4.1.X` there.
 2. Keep **Log layout decisions** on (F12, `3. Diagnostics`; it is on by default).
-3. Open `BepInEx\LogOutput.log`. Expect `Healthy Inventory 0.1.1 loaded.` and no line containing
+3. Open `BepInEx\LogOutput.log`. Expect `Healthy Inventory 0.1.2 loaded.` and no line containing
    `could not hook` or `failed`.
 
 ## A. Out of raid stays vanilla [6]
@@ -29,6 +29,11 @@ Press Tab in a raid with nothing looted.
 - Log: `(RaidInventoryScreenController, Gear tab): combined layout.`, then
   `Combined layout on: health column 675x902, panel WxH at scale 1. Opens 1, closes 0. Effect handlers: started N, removed M.`
   **Write down N and M** for section G.
+- A moment later, once per session: a `Layout report (first combined open this session)` block.
+  It lists every rectangle in canvas units and ends with two checks:
+  `Check: K visible graphics; 0 outside the column, 0 over the gear column. OK`. Anything other than
+  `OK`, or a `LOOK` line, names the pieces that clip or overlap. **Send the whole block** if anything
+  on screen looks off; it is usually enough to fix the layout without a screenshot.
 - Gear and weapons left, rig/pockets/backpack in the middle, health on the right, all at once, no click.
 - Top of the health column level with the top of the gear column; bottom above the quick-slot icons.
 - Body diagram undistorted; seven body parts with values; overall HP, hydration, energy,
@@ -36,6 +41,8 @@ Press Tab in a raid with nothing looted.
 - The column background, bottom strip and frame look like the gear column's. If they look wrong,
   turn off **Column background and frame** (F12, `2. Look`) and note what was wrong.
 - Nothing overlaps the containers column or the quick-slot bar.
+- **Scav raid:** the same, with the scav's gear. (Read off the game: PMC and scav raids open the
+  inventory through the same `EftGamePlayerOwner.ShowInventoryScreen`, which has no side check.)
 
 ## C. Live updates while open [2]
 
@@ -97,8 +104,10 @@ For each of 1920x1080, 2560x1440, 1920x1200 (16:10), 2560x1080 or 3440x1440 (21:
 - `Combined layout on: ... scale 1` (anything below 1 means Left Panel is wider than expected; note the numbers).
 - Column height grows with taller aspect ratios (16:10, 5:4); width stays the same.
 - On 21:9 and wider, the inventory stays a 1920-unit block in the middle (vanilla behaviour), with the column at its right.
-- In windowed mode, resize the window with the inventory open: one `Layout changed; health column now ...`
-  line and the column follows without reopening.
+- In windowed mode, resize the window with the inventory open: `Layout changed; health column now ...`
+  lines and the column follows without reopening. When the resize stops, one
+  `Layout report (size changed)` block, ending in `OK`.
+- Each new resolution: the first open's report shows the new screen size and canvas scale, and `OK`.
 
 ## I. Raid end and death
 
@@ -126,6 +135,20 @@ poison rows and their rate arrows) and adds effect icons; both follow the panel 
    `vanilla layout (looting)`.
 6. Knocked unconscious with the inventory open (if reachable): no errors; Tab afterwards works.
 7. No `[Blood Pressure]`, `[Radiation]` or `Combined layout failed` warnings in the log.
+
+## J3. With Fika 2.4.6
+
+Static reading (Fika-Plugin tag v2.4.6): no patch on InventoryScreen, ItemsPanel or any health UI.
+`CoopGame` is a `BaseLocalGame<EftGamePlayerOwner>`, so Tab goes through the same vanilla
+`EftGamePlayerOwner.ShowInventoryScreen` and `RaidInventoryScreenController`. The local player's
+`ClientHealthController` derives from the game's `PlayerHealthController` (handler counts work on it
+in the harness). Reviving a downed teammate opens their inventory as loot.
+
+1. Host and client: Tab in raid, combined layout, live values (C1 to C3), treatment by drag (D1).
+2. Section G on a client: N and M stay the same over twenty opens.
+3. Downed (revive enabled) with the inventory open: no errors; after revival Tab works.
+4. Reviving a teammate: their inventory opens with `vanilla layout (looting)`.
+5. Spectating after death: Tab does nothing new; next raid works.
 
 ## K. Settings while open
 

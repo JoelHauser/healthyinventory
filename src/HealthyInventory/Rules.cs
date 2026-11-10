@@ -134,6 +134,22 @@ namespace HealthyInventory
             h = screenH / s;
         }
 
+        /// <summary>Slack for the layout report's checks: rounding in world-to-canvas conversion
+        /// and one-unit borders drawn on an edge are not clipping.</summary>
+        public const float ReportTolerance = 1.5f;
+
+        /// <summary>Whether <paramref name="inner"/> lies within <paramref name="outer"/>, allowing
+        /// <paramref name="tolerance"/> units on each edge.</summary>
+        public static bool Inside(Box inner, Box outer, float tolerance) =>
+            inner.XMin >= outer.XMin - tolerance && inner.XMax <= outer.XMax + tolerance &&
+            inner.YMin >= outer.YMin - tolerance && inner.YMax <= outer.YMax + tolerance;
+
+        /// <summary>Whether two boxes share more than <paramref name="tolerance"/> units in both
+        /// directions. Touching edges are not an overlap.</summary>
+        public static bool Overlaps(Box a, Box b, float tolerance) =>
+            Math.Min(a.XMax, b.XMax) - Math.Max(a.XMin, b.XMin) > tolerance &&
+            Math.Min(a.YMax, b.YMax) - Math.Max(a.YMin, b.YMin) > tolerance;
+
         private static float Clamp(float v, float lo, float hi) => v < lo ? lo : (v > hi ? hi : v);
     }
 }
