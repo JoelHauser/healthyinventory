@@ -14,11 +14,11 @@ screen sizes, metadata of the patched assembly), and tools/PatchHarness in the g
 runtime (all four patches apply with BepInEx's Harmony 2.9; decision glue on real controller types
 for every screen kind). Next step: Joel runs docs/TEST-PLAN.md.
 
-Repo https://github.com/JoelHauser/healthyinventory.git (public), `main`. 0.1.0 and 0.1.1 are
-GitHub **pre-releases** (tags `v0.1.0`, `v0.1.1`) with their zips. 0.1.1 = two robustness fixes in
+Repo https://github.com/JoelHauser/healthyinventory.git (public), `main`. 0.1.0, 0.1.1 and 0.1.2 are
+GitHub **pre-releases** (tags `v0.1.0`..`v0.1.2`) with their zips. 0.1.1 = two robustness fixes in
 HealthColumn (combined flag set before the panel moves; no `?.` on a Transform) plus the CutContent
-compatibility reading below; behaviour otherwise identical. 0.1.2 (built 2026-11-10, not yet committed or
-released when written) adds the layout report (HealthColumn.Report.cs: one log block with every rect in
+compatibility reading below; behaviour otherwise identical. 0.1.2 (pre-release v0.1.2,
+commit 20ca513) adds the layout report (HealthColumn.Report.cs: one log block with every rect in
 canvas units and Rules.Inside/Overlaps checks on every visible graphic, first combined open per session
 and after a resize, two frames late) plus the Fika and scav-raid readings below. None has been run in game. Commit as `Joel Hauser <jhauser@bostonlightsource.com>`;
 write commit messages and release notes to a file (UTF-8 without BOM) and use `-F` / `--notes-file`.
