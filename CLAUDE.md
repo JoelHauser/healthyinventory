@@ -14,8 +14,10 @@ screen sizes, metadata of the patched assembly), and tools/PatchHarness in the g
 runtime (all four patches apply with BepInEx's Harmony 2.9; decision glue on real controller types
 for every screen kind). Next step: Joel runs docs/TEST-PLAN.md.
 
-Repo https://github.com/JoelHauser/healthyinventory.git (public), `main`. 0.1.0 is a GitHub
-**pre-release** (tag `v0.1.0`) with its zip. Commit as `Joel Hauser <jhauser@bostonlightsource.com>`;
+Repo https://github.com/JoelHauser/healthyinventory.git (public), `main`. 0.1.0 and 0.1.1 are
+GitHub **pre-releases** (tags `v0.1.0`, `v0.1.1`) with their zips. 0.1.1 = two robustness fixes in
+HealthColumn (combined flag set before the panel moves; no `?.` on a Transform) plus the CutContent
+compatibility reading below; behaviour otherwise identical. Neither has been run in game. Commit as `Joel Hauser <jhauser@bostonlightsource.com>`;
 write commit messages and release notes to a file (UTF-8 without BOM) and use `-F` / `--notes-file`.
 
 ## The design in one paragraph
@@ -60,6 +62,25 @@ SetActive itself, its OnDisable runs inside a hierarchy deactivation).
   `m_InstanceID`. The harness fakes `m_CachedPtr` to make shells "alive".
 - UI Fixes (Tyfon.UIFixes.dll, decompiled): WindowPatches on InventoryScreen.ShowWithTab/Close
   clear windows in raid; OpenSortingTable touches `_simpleStashPanel` out of raid only. No overlap.
+
+## CutContent / Re-Classic (Joel asked 2026-11-10 for compatibility with its latest)
+
+Read 1.3.0 (commit c091e87, github.com/ReplayDEVYT/CutContent, mod name Re-Classic by mizmii) and
+its required DrakiaXYZ Search Open Containers 1.5.0. No conflict found:
+- No patch on InventoryScreen, ItemsPanel, InventoryScreenHealthPanel, BodyPartView or EffectsPanel.
+- BloodPressure.HealthPanelPatch and RadiationZones.HealthPanelPatch postfix
+  `HealthParametersPanel.UpdateMainHealthAndStats` and work through `__instance` fields
+  (`_bloodPressure`, `_radiation`, `_poisoning`, `_hydration`). RateReadout copies the hydration
+  row's arrows into the target row and positions them in world space with TransformVector, so it
+  follows the moved panel and our uniform scale. Both panels (gear strip and column) run it.
+- CustomEffects adds icons to `StaticIcons.EffectIcons`, which EffectsPanel reads on Show.
+- Loot: BodySearch wraps the vanilla Search action (delayed), NoContainerInventory replaces Search
+  with a world Open on shut containers, LootAnimations wraps ShowInventoryScreenLoot's callback,
+  Search Open Containers calls `InteractionContextHelper.OnContainerOpen`. All arrive with a loot
+  item, so Decide says Looting.
+- Knockout hides canvases under GameUI and EftBattleUIScreen only; InventoryScreen is in CommonUI.
+- Nothing finds health UI by transform path. Its UiTuner (dev tool) takes the first active
+  HealthParametersPanel, which may now be the column's.
 
 ## Building on the work machine
 

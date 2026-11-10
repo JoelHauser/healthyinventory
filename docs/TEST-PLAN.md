@@ -1,14 +1,14 @@
 # Healthy Inventory: in-game test plan
 
-Version 0.1.0 has **never been run in game**. Everything below is still to be checked. Numbers in
+Version 0.1.1 has **never been run in game**. Everything below is still to be checked. Numbers in
 brackets refer to the brief's eight validation points.
 
 ## Setup
 
-1. Install `releases/HealthyInventory-0.1.0.zip` into the live SPT install (`H:\SPT4.1.X`), or
+1. Install `releases/HealthyInventory-0.1.1.zip` into the live SPT install (`H:\SPT4.1.X`), or
    `scripts\pack.ps1 -SPTPath H:\SPT4.1.X -InstallTo H:\SPT4.1.X` there.
 2. Keep **Log layout decisions** on (F12, `3. Diagnostics`; it is on by default).
-3. Open `BepInEx\LogOutput.log`. Expect `Healthy Inventory 0.1.0 loaded.` and no line containing
+3. Open `BepInEx\LogOutput.log`. Expect `Healthy Inventory 0.1.1 loaded.` and no line containing
    `could not hook` or `failed`.
 
 ## A. Out of raid stays vanilla [6]
@@ -109,6 +109,23 @@ For each of 1920x1080, 2560x1440, 1920x1200 (16:10), 2560x1080 or 3440x1440 (21:
 
 Repeat B, D5, E and F. Static reading says there is no overlap (its window save/restore is off in
 raid, and its stash-panel hook is for the sorting table out of raid), but they have never run together.
+
+## J2. With CutContent (Re-Classic) 1.3.0 and Search Open Containers 1.5.0
+
+Static reading: neither patches InventoryScreen, ItemsPanel or the health panel's placement.
+CutContent postfixes `HealthParametersPanel.UpdateMainHealthAndStats` (blood pressure, radiation,
+poison rows and their rate arrows) and adds effect icons; both follow the panel into the column.
+
+1. Tab in raid: combined layout. Blood pressure, radiation and poison rows in the column's
+   parameters strip show CutContent's values, with its rate arrows beside the numbers (not
+   floating elsewhere). Its custom effect icons (stress, overdose...) on the body parts.
+2. Resize the window with the inventory open: the rate arrows stay beside their numbers.
+3. Health tab: the same rows on the vanilla panel, unchanged.
+4. Timed body search: the loot screen that opens after the progress bar logs `vanilla layout (looting)`.
+5. A closed container (Open swings the lid, no screen), then Search on the open container:
+   `vanilla layout (looting)`.
+6. Knocked unconscious with the inventory open (if reachable): no errors; Tab afterwards works.
+7. No `[Blood Pressure]`, `[Radiation]` or `Combined layout failed` warnings in the log.
 
 ## K. Settings while open
 

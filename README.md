@@ -10,7 +10,7 @@ It only appears there. Looting a body, a container or a loose bag shows the norm
 and its full loot space. The stash, hideout, main menu, traders and every out-of-raid screen are
 untouched. The Health tab itself still works as before.
 
-**Status: 0.1.0, built and tested outside the game, not yet run in game.** See
+**Status: 0.1.1, built and tested outside the game, not yet run in game.** See
 [docs/TEST-PLAN.md](docs/TEST-PLAN.md).
 
 ## Requirements
@@ -49,6 +49,11 @@ open. There is no UI-scale setting in this EFT version to account for.
 ## Compatibility
 
 - **UI Fixes:** no overlapping hooks found by reading its code; not yet run together.
+- **CutContent / Re-Classic 1.3.0** (and its dependency Search Open Containers 1.5.0): no
+  overlapping hooks found by reading their code; not yet run together. Its blood pressure,
+  radiation and poison readouts and its extra effect icons appear in the health column, since they
+  attach to the game's own panel wherever it is. Its body search, open-without-search containers
+  and Search on open containers all still end in the normal looting layout.
 - Mods that rebuild the inventory screen's layout: if the panels are not where the game puts them,
   the mod logs a warning and leaves the inventory vanilla.
 - Container windows you open float over the health column, as they float over the loot panel.

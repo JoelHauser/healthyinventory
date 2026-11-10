@@ -197,13 +197,15 @@ namespace HealthyInventory
             _oAnchorMin = t.anchorMin; _oAnchorMax = t.anchorMax; _oPivot = t.pivot;
             _oOffsetMin = t.offsetMin; _oOffsetMax = t.offsetMax; _oScale = t.localScale;
 
+            // Marked before anything moves, so a failure anywhere below is undone by End.
+            _combined = true;
+            Begins++;
+
             t.SetParent(_fit, false);
             t.SetSiblingIndex(0);   // under the bottom bar, as in Left Panel
             t.anchorMin = Vector2.zero; t.anchorMax = Vector2.one; t.pivot = new Vector2(0.5f, 0.5f);
             t.offsetMin = Vector2.zero; t.offsetMax = Vector2.zero; t.localScale = Vector3.one;
 
-            _combined = true;
-            Begins++;
             Relayout();
             _panel.Show(health, inventory, skills);
             Refresh();
@@ -241,7 +243,7 @@ namespace HealthyInventory
             if (gameObject.activeSelf) gameObject.SetActive(false);
 
             if (Plugin.VerboseLog.Value)
-                Plugin.Log.LogInfo($"Combined layout off; health panel returned to {t.parent?.name}. Opens {Begins}, closes {Ends}.");
+                Plugin.Log.LogInfo($"Combined layout off; health panel returned to {(t.parent != null ? t.parent.name : "nothing")}. Opens {Begins}, closes {Ends}.");
         }
 
         internal static void EndFor(ItemsPanel items)
