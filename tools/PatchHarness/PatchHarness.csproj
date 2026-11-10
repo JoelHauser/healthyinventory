@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Runs in the game's mono runtime via tools/MonoHost. See Program.cs for what it can and cannot prove. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <GameManaged>$(SPTPath)\EscapeFromTarkov_Data\Managed</GameManaged>
+    <BepInExCore>$(SPTPath)\BepInEx\core</BepInExCore>
+  </PropertyGroup>
+
+  <!-- The plugin's real sources, so the harness exercises exactly what ships. -->
+  <ItemGroup>
+    <Compile Include="..\..\src\HealthyInventory\*.cs" LinkBase="Plugin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp"><HintPath>$(GameManaged)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Comfort"><HintPath>$(GameManaged)\Comfort.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Comfort.Unity"><HintPath>$(GameManaged)\Comfort.Unity.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Sirenix.Serialization"><HintPath>$(GameManaged)\Sirenix.Serialization.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="ItemComponent.Types"><HintPath>$(GameManaged)\ItemComponent.Types.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(GameManaged)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(GameManaged)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(GameManaged)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UIModule"><HintPath>$(GameManaged)\UnityEngine.UIModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>
