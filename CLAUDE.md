@@ -99,6 +99,29 @@ its required DrakiaXYZ Search Open Containers 1.5.0. No conflict found:
 - Prebuilding the column at raid start was considered and dropped: For() makes two empty objects and
   copies two small decorations; the first Show cost is the vanilla panel's own.
 
+## Look ideas (proposed 2026-11-10, none built; Joel has not chosen yet)
+
+Nothing has been seen on screen; the first in-game screenshot and Layout report decide 4-6.
+Recommended order: 1 and 2 first (prefab data only), 3 as an opt-in setting, 4-6 after a raid.
+
+1. **Header bar** like the loot panels' title bar (container name) above the column, titled with
+   the game's own localized "Health" if one exists. Copy the header object from the Stash Panel
+   prefab; biggest step toward looking native.
+2. **Match the vanilla column gap.** `Rules.MinGap` is 8; vanilla gear-to-loot gap is about 3
+   (LeftSide xMax 1224.9, Stash Panel xMin 1228). One number, plus the geometry tests.
+3. **Hide the duplicated stats** (HP, hydration, energy) in the gear column's bottom strip while
+   combined, keeping weight. Opt-in setting, default off.
+4. **Capped upscale (~1.1)** if Left Panel is narrower than the 675-unit column and leaves empty
+   side bands. `Rules.FitScale` currently never goes above 1; sprites are mostly 9-sliced, the body
+   silhouette may soften.
+5. **Vertical placement**: Fit is pinned to the top; centre it or seat the parameters strip just
+   above the quick slots if there is slack. Taste, decide from a screenshot.
+6. **Drop elements meant for the Health tab** (a second stats row, left-column frame edges) if the
+   report's child list shows any.
+
+Not doing: restyling the panel (new colours, fonts, body art), since using the game's own panel is
+what keeps it matching updates and mods like CutContent; and transitions, which vanilla doesn't have.
+
 ## Building on the work machine
 
 `C:\HUH` (SPT 4.1.6, EFT 0.16.9.40743) is unpatched, never launched, and must stay untouched. The
