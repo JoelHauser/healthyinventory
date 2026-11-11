@@ -29,8 +29,6 @@ HP or what's bleeding.
 2. Extract it into your SPT folder, so that `BepInEx/plugins/HealthyInventory.dll` exists.
 3. Start the game.
 
-**Requires** SPT 4.1.x. Built against SPT 4.1.6 (EFT 0.16.9.40743).
-
 ## Settings
 
 Open the in-game configuration manager with **F12**.
