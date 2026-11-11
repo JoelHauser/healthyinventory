@@ -76,6 +76,8 @@ namespace HealthyInventory
             sb.Append($"  Body parts shown: {parts.Length}\n");
             foreach (var p in parts) Line(sb, root, "    " + p.name, p.transform as RectTransform);
 
+            ReportParameterValues(sb, root);
+
             // Checks: every visible graphic of the panel inside the column, none over the gear column.
             int visible = 0, outside = 0, overGear = 0;
             var examples = new List<string>();
@@ -98,6 +100,49 @@ namespace HealthyInventory
             sb.Append($"  Decorations: background {(_background != null ? (_background.enabled ? "on" : "off") : "missing")}, " +
                       $"bottom bar {State(_bottomBar)}, border {State(_border)}");
             return sb.ToString();
+        }
+
+        /// <summary>Each parameter row's big number: what it says, whether it can be seen, and
+        /// whether a copied decoration is drawn over it. The first in-game run showed "/440" and
+        /// "/100" with the numbers in front of them missing.</summary>
+        private void ReportParameterValues(StringBuilder sb, RectTransform root)
+        {
+            var rows = _panel.GetComponentsInChildren<HealthParameterPanel>(true);
+            sb.Append($"  Parameter rows: {rows.Length}\n");
+            foreach (var row in rows)
+            {
+                var group = row.GetComponent<CanvasGroup>();
+                sb.Append("    ").Append(row.name).Append(row.gameObject.activeInHierarchy ? "" : " (inactive)")
+                  .Append(group != null && group.alpha <= 0f ? " (hidden)" : "")
+                  .Append($" default a={DefaultAlpha(row):0.##}: ");
+                AppendText(sb, root, "value", row._currentValue);
+                sb.Append("; ");
+                AppendText(sb, root, "max", row._maxValue);
+                sb.Append('\n');
+
+                var t = row._currentValue;
+                if (t == null || _bottomBar == null || !_bottomBar.activeInHierarchy) continue;
+                Box tb = ToCanvas(root, t.rectTransform);
+                foreach (var g in _bottomBar.GetComponentsInChildren<Graphic>(false))
+                {
+                    if (!g.enabled || g.color.a <= 0f) continue;
+                    Box gb = ToCanvas(root, g.rectTransform);
+                    if (Rules.Overlaps(tb, gb, Rules.ReportTolerance))
+                        sb.Append($"      covered by bottom bar {Path(g.transform)} {gb} {g.GetType().Name} a={g.color.a:0.##}\n");
+                }
+            }
+        }
+
+        private static void AppendText(StringBuilder sb, RectTransform root, string label, TMPro.TMP_Text t)
+        {
+            if (t == null) { sb.Append(label).Append(" none"); return; }
+            string text = t.text ?? "";
+            if (text.Length > 60) text = text.Substring(0, 60) + "...";
+            var cr = t.canvasRenderer;
+            sb.Append($"{label} '{text}' {(t.gameObject.activeInHierarchy ? "active" : "INACTIVE")}{(t.enabled ? "" : " DISABLED")} " +
+                      $"a={t.color.a:0.##} inherited={(cr != null ? cr.GetInheritedAlpha() : -1f):0.##} " +
+                      $"cull={(cr != null && cr.cull)} size={t.fontSize:0.#} chars={t.textInfo?.characterCount ?? -1} " +
+                      $"font={(t.font != null ? t.font.name : "none")} {ToCanvas(root, t.rectTransform)}");
         }
 
         private static string State(GameObject go) => go == null ? "missing" : (go.activeSelf ? "on" : "off");

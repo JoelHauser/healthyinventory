@@ -13,7 +13,7 @@ namespace HealthyInventory
         public const string PluginName = "Healthy Inventory";
 
         // Must match the csproj <Version>; scripts\pack.ps1 refuses to pack if they differ.
-        public const string PluginVersion = "0.1.2";
+        public const string PluginVersion = "0.1.5";
 
         internal static ManualLogSource Log;
         internal static ConfigEntry<bool> Enabled;

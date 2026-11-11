@@ -110,17 +110,19 @@ namespace HealthyInventory
         }
 
         /// <summary>
-        /// Uniform scale for the vanilla health panel, laid out at its design size (the size of
-        /// the gear column it was built for), so it fits the column. Never above 1: the panel is
-        /// shown at its native size or shrunk, never stretched, so the body diagram keeps its
-        /// proportions.
+        /// The size the vanilla health panel is laid out at inside the column, always at scale 1.
+        /// Height is the column's: the panel stretches over Left Panel, which is the gear column's
+        /// height, so it fills the same height as the gear beside it. Width is Left Panel's, capped
+        /// at the column's: body parts are fraction anchors plus pixel offsets, so a narrower
+        /// layout only pulls the labels closer together, and Left Panel is only wider than the
+        /// column when a mod (UltrawideStash, UIScale.Reloaded) has widened the inventory, where
+        /// shrinking the whole panel to fit made it short and small (first in-game run, 3440x1440).
         /// </summary>
-        public static float FitScale(float hostW, float hostH, float designW, float designH)
+        public static void PanelLayoutSize(float hostW, float hostH, float leftPanelW, float leftPanelH,
+                                           out float w, out float h)
         {
-            if (hostW <= 0f || hostH <= 0f) return 1f;
-            if (!DesignUsable(designW, designH)) return 1f;
-            float s = Math.Min(hostW / designW, hostH / designH);
-            return s >= 1f ? 1f : s;
+            h = hostH;
+            w = DesignUsable(leftPanelW, leftPanelH) ? Math.Min(leftPanelW, hostW) : hostW;
         }
 
         public static bool DesignUsable(float w, float h) => w >= MinDesignEdge && h >= MinDesignEdge;

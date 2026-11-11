@@ -127,31 +127,29 @@ public class GeometryTests
 
     [Theory]
     [MemberData(nameof(Screens))]
-    public void ThePanelIsShownAtNativeSizeForAnyPlausibleGearColumnWidth(int w, int h, string name)
+    public void ThePanelFillsTheColumnHeightAndKeepsANarrowerLeftPanelsWidth(int w, int h, string name)
     {
-        // The vanilla Health Panel stretches over Left Panel, so its design size is Left Panel's.
-        // Left Panel's width comes from LeftSide's layout group at runtime (not in the prefab
-        // data); the gear slots alone are 494 wide and LeftSide is 1213, shared with containers.
+        // The vanilla Health Panel stretches over Left Panel, so it is laid out at Left Panel's
+        // width when that fits; the gear slots alone are 494 wide and LeftSide is 1213, shared
+        // with containers. Height is always the column's, the gear column's height.
         var (_, _, left, stash, _) = Prefab.Layout(w, h);
-        var o = Rules.ColumnOffsets(stash, left, true);
-        var col = Prefab.Column(stash, o);
+        var col = Prefab.Column(stash, Rules.ColumnOffsets(stash, left, true));
         for (float designW = 494f; designW <= 670f; designW += 8f)
         {
-            float k = Rules.FitScale(col.Width, col.Height, designW, left.Height);
-            Assert.True(Math.Abs(k - 1f) < Eps, $"{name}: design {designW} scaled {k}");
+            Rules.PanelLayoutSize(col.Width, col.Height, designW, left.Height, out float pw, out float ph);
+            Assert.True(Math.Abs(pw - designW) < Eps, $"{name}: design {designW} laid out {pw} wide");
+            Assert.True(Math.Abs(ph - left.Height) < Eps, $"{name}: {ph} high, gear column {left.Height}");
         }
     }
 
     [Fact]
-    public void AWiderPanelShrinksUniformlyAndStaysReadable()
+    public void AWidenedLeftPanelIsCappedAtTheColumnNotShrunk()
     {
-        var (_, _, left, stash, _) = Prefab.Layout(1920, 1080);
-        var col = Prefab.Column(stash, Rules.ColumnOffsets(stash, left, true));
-        // Even if Left Panel took the whole of LeftSide's 1213 units, which it cannot, since the
-        // containers share it, the panel would only shrink, keep its proportions, and fit.
-        float k = Rules.FitScale(col.Width, col.Height, 760f, left.Height);
-        Assert.InRange(k, 0.85f, 0.9f);
-        Assert.True(760f * k <= col.Width + Eps && left.Height * k <= col.Height + Eps);
+        // First in-game run, 3440x1440 with an ultrawide-inventory mod: Left Panel 930.5x902,
+        // column 680x902. 0.1.2 shrank the panel to 0.731 and pinned it to the top (659 high).
+        Rules.PanelLayoutSize(680f, 902f, 930.5f, 902f, out float w, out float h);
+        Assert.Equal(680f, w);
+        Assert.Equal(902f, h);
     }
 
     [Theory]
@@ -161,19 +159,17 @@ public class GeometryTests
     public void ADesignSizeReadBeforeLayoutRanFallsBackToTheColumn(float dw, float dh)
     {
         Assert.False(Rules.DesignUsable(dw, dh));
-        Assert.Equal(1f, Rules.FitScale(675f, 902f, dw, dh));
+        Rules.PanelLayoutSize(675f, 902f, dw, dh, out float w, out float h);
+        Assert.Equal(675f, w);
+        Assert.Equal(902f, h);
     }
 
     [Fact]
-    public void NeverEnlarged()
+    public void AZeroSizedColumnGivesAZeroSizedPanel()
     {
-        Assert.Equal(1f, Rules.FitScale(2000f, 2000f, 600f, 900f));
-    }
-
-    [Fact]
-    public void AZeroSizedColumnDoesNotDivideByZero()
-    {
-        Assert.Equal(1f, Rules.FitScale(0f, 0f, 600f, 900f));
+        Rules.PanelLayoutSize(0f, 0f, 600f, 900f, out float w, out float h);
+        Assert.Equal(0f, w);
+        Assert.Equal(0f, h);
     }
 
     [Fact]

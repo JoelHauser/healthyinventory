@@ -51,6 +51,16 @@ public sealed class GameAssemblyTests : IDisposable
     [InlineData("EFT.UI.ItemsPanel", "_inventory", "EFT.InventoryLogic.Inventory")]
     [InlineData("EFT.UI.ItemsPanel", "_skills", "EFT.SkillManager")]
     [InlineData("EFT.UI.InventoryScreen", "_lootItem", "EFT.InventoryLogic.CompoundItem")]
+    [InlineData("EFT.UI.Health.HealthParameterPanel", "_defaultColor", "UnityEngine.Color")]
+    [InlineData("EFT.UI.Health.HealthParameterPanel", "_currentValue", "TMPro.TMP_Text")]
+    [InlineData("EFT.UI.Health.InventoryScreenHealthPanel", "_parametersPanel", "EFT.UI.Health.HealthParametersPanel")]
+    [InlineData("EFT.UI.Health.HealthParametersPanel", "_overallHealth", "EFT.UI.Health.BuffableHealthParameterPanel")]
+    [InlineData("EFT.UI.Health.HealthParametersPanel", "_hydration", "EFT.UI.Health.BuffableHealthParameterPanel")]
+    [InlineData("EFT.UI.Health.HealthParametersPanel", "_energy", "EFT.UI.Health.BuffableHealthParameterPanel")]
+    [InlineData("EFT.UI.Health.HealthParametersPanel", "_temperature", "EFT.UI.Health.BuffableHealthParameterPanel")]
+    [InlineData("EFT.UI.Health.HealthParametersPanel", "_poisoning", "EFT.UI.Health.HealthParameterPanel")]
+    [InlineData("EFT.UI.Health.HealthParametersPanel", "_radiation", "EFT.UI.Health.HealthParameterPanel")]
+    [InlineData("EFT.UI.Health.HealthParametersPanel", "_bloodPressure", "EFT.UI.Health.HealthParameterPanel")]
     public void PrivateFieldsReachedByNameExistWithTheirTypes(string type, string field, string fieldType)
     {
         Assert.Equal(fieldType, Field(type, field).FieldType.FullName);

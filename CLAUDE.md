@@ -8,7 +8,8 @@ was taken.
 
 ## State
 
-0.1.0 built 2026-11-10 on the work machine against a mirror (below). **Never run in game.**
+0.1.0 built 2026-11-10 on the work machine against a mirror (below). 0.1.2-0.1.4 run in game on
+2026-11-10 (see "First in-game runs"); 0.1.5 installed in H:\SPT4.1.X, not yet run.
 Verified outside the game: 0-warning build, 113 xunit tests (138 from 0.1.2) (decision table, prefab geometry at 14
 screen sizes, metadata of the patched assembly), and tools/PatchHarness in the game's own mono
 runtime (all four patches apply with BepInEx's Harmony 2.9; decision glue on real controller types
@@ -20,8 +21,30 @@ HealthColumn (combined flag set before the panel moves; no `?.` on a Transform) 
 compatibility reading below; behaviour otherwise identical. 0.1.2 (pre-release v0.1.2,
 commit 20ca513) adds the layout report (HealthColumn.Report.cs: one log block with every rect in
 canvas units and Rules.Inside/Overlaps checks on every visible graphic, first combined open per session
-and after a resize, two frames late) plus the Fika and scav-raid readings below. None has been run in game. Commit as `Joel Hauser <jhauser@bostonlightsource.com>`;
+and after a resize, two frames late) plus the Fika and scav-raid readings below. Commit as `Joel Hauser <joel.hauser@gmail.com>` (linked to
+the JoelHauser account; the work address left commits anonymous on GitHub);
 write commit messages and release notes to a file (UTF-8 without BOM) and use `-F` / `--notes-file`.
+
+## First in-game runs (2026-11-10, 3440x1440, Joel's home machine, H:\SPT4.1.X)
+
+- 0.1.2: column correct place, but the inventory was widened by an ultrawide mod (canvas 2580
+  units, LeftSide 1866, **Left Panel 930.5** wide, Stash Panel still 680). The panel was laid out
+  at Left Panel's size and shrunk to 0.731, pinned top: short and small. 0.1.3 lays it out at the
+  column's height and min(Left Panel, column) width, always scale 1 (`Rules.PanelLayoutSize`).
+  So "InventoryScreen is a fixed 1920-unit column" below is vanilla only.
+- Missing big numbers (HP, hydration, energy, temperature, poisoning), first open also had no
+  body-part labels and a red silhouette, and afterwards the Health tab numbers were blank too.
+  Root cause (fixed in 0.1.5): Begin called `_panel.Show` while the column host was still
+  inactive. InventoryScreenHealthPanel.Awake fills the body-part dictionary Show iterates (empty
+  before Awake), and HealthParameterPanel.Awake saves `_defaultColor` from the text's colour;
+  Show had already painted the text with the unset default (0,0,0,0), so Awake saved alpha 0
+  and every repaint stayed invisible for the session. Rows never recoloured (radiation, blood
+  pressure) were visible. **Activate the host before calling any game Show.**
+- Joel's layout choice (0.1.4): in the column, hide overall HP, hydration and energy (the gear
+  strip on the left shows them); poisoning and radiation take the hydration and energy slots.
+  HealthColumn.Parameters.cs: CanvasGroup alpha 0 (not SetActive, so updates and buff-arrow
+  animators keep running) and a parent/sibling/rect swap; all undone in End.
+- Confirmed in game: 0.1.4's row layout on a second open. 0.1.5 not yet run.
 
 ## The design in one paragraph
 
@@ -109,10 +132,10 @@ Recommended order: 1 and 2 first (prefab data only), 3 as an opt-in setting, 4-6
    prefab; biggest step toward looking native.
 2. **Match the vanilla column gap.** `Rules.MinGap` is 8; vanilla gear-to-loot gap is about 3
    (LeftSide xMax 1224.9, Stash Panel xMin 1228). One number, plus the geometry tests.
-3. **Hide the duplicated stats** (HP, hydration, energy) in the gear column's bottom strip while
-   combined, keeping weight. Opt-in setting, default off.
+3. ~~Hide the duplicated stats in the gear strip~~: Joel chose the opposite, hiding them in the
+   column instead (done in 0.1.4).
 4. **Capped upscale (~1.1)** if Left Panel is narrower than the 675-unit column and leaves empty
-   side bands. `Rules.FitScale` currently never goes above 1; sprites are mostly 9-sliced, the body
+   side bands. `Rules.PanelLayoutSize` always lays out at scale 1; sprites are mostly 9-sliced, the body
    silhouette may soften.
 5. **Vertical placement**: Fit is pinned to the top; centre it or seat the parameters strip just
    above the quick slots if there is slack. Taste, decide from a screenshot.
@@ -134,7 +157,7 @@ Patched is 16,233,472 bytes. 0.1.0 used a mirror copied from a FirstShotSmoothne
 whose `.spt-bak` hashed identical to C:\HUH's DLL (SHA-256 43A539F5...).
 
 ```
-scripts\pack.ps1 -SPTPath <mirror>                      # build, 138 tests, reference check, zip
+scripts\pack.ps1 -SPTPath <mirror>                      # build, 147 tests, reference check, zip
 scripts\run-harness.ps1 -SPTPath <mirror> -Mono C:\HUH\MonoBleedingEdge -Work <empty dir>
 ```
 

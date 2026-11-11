@@ -1,6 +1,7 @@
 # Healthy Inventory: in-game test plan
 
-Version 0.1.2 has **never been run in game**. Everything below is still to be checked. Numbers in
+Version 0.1.5. Sections A (row 1) and B (layout, at 3440x1440) were partly run on 0.1.2-0.1.4;
+re-check B on 0.1.5, especially the first open of a session. Numbers in
 brackets refer to the brief's eight validation points.
 
 ## Setup
@@ -36,8 +37,11 @@ Press Tab in a raid with nothing looted.
   on screen looks off; it is usually enough to fix the layout without a screenshot.
 - Gear and weapons left, rig/pockets/backpack in the middle, health on the right, all at once, no click.
 - Top of the health column level with the top of the gear column; bottom above the quick-slot icons.
-- Body diagram undistorted; seven body parts with values; overall HP, hydration, energy,
-  temperature and the rest along its bottom.
+- **First open of the session:** seven body-part labels with values, silhouette not red.
+- Along the bottom: temperature, blood pressure, toxicity and radiation, all with numbers. No
+  overall HP, hydration or energy (the gear strip on the left shows those).
+- Health tab afterwards: overall HP, hydration, energy and temperature with numbers, the rows in
+  their vanilla places.
 - The column background, bottom strip and frame look like the gear column's. If they look wrong,
   turn off **Column background and frame** (F12, `2. Look`) and note what was wrong.
 - Nothing overlaps the containers column or the quick-slot bar.

@@ -207,7 +207,17 @@ namespace HealthyInventory
             t.offsetMin = Vector2.zero; t.offsetMax = Vector2.zero; t.localScale = Vector3.one;
 
             Relayout();
+            // Visible before Show. The game's Show assumes the panel is in an active hierarchy, so
+            // its Awake has run: InventoryScreenHealthPanel.Awake fills the body-part list Show
+            // iterates, and HealthParameterPanel.Awake saves the colour every repaint uses. Shown
+            // inside the still-inactive column (0.1.0-0.1.4), the first open drew no body parts
+            // and each row then saved the transparent colour Show had painted, for the session,
+            // Health tab included. Refresh below hides the column again if a loot panel is up.
+            if (!gameObject.activeSelf) gameObject.SetActive(true);
+            if (!_panel.gameObject.activeInHierarchy)
+                Plugin.Log.LogWarning("The health column's parent is not active; the health panel may show incomplete.");
             _panel.Show(health, inventory, skills);
+            AdjustParameters();
             Refresh();
 
             if (Plugin.VerboseLog.Value)
@@ -229,6 +239,14 @@ namespace HealthyInventory
             catch (Exception e)
             {
                 Plugin.Log.LogError($"Closing the borrowed health panel failed: {e}");
+            }
+            try
+            {
+                RestoreParameters();
+            }
+            catch (Exception e)
+            {
+                Plugin.Log.LogError($"Restoring the health panel's parameters strip failed: {e}");
             }
 
             var t = (RectTransform)_panel.transform;
@@ -324,12 +342,12 @@ namespace HealthyInventory
 
             float hostW = stash.Width - o.Left + o.Right;
             float hostH = stash.Height - o.Bottom + o.Top;
-            Vector2 design = _lastLeftPanel;
-            if (!Rules.DesignUsable(design.x, design.y)) design = new Vector2(hostW, hostH);
-            float k = Rules.FitScale(hostW, hostH, design.x, design.y);
+            Rules.PanelLayoutSize(hostW, hostH, _lastLeftPanel.x, _lastLeftPanel.y, out float dw, out float dh);
+            var design = new Vector2(dw, dh);
+            const float k = 1f;
 
             _fit.sizeDelta = design;
-            _fit.localScale = new Vector3(k, k, 1f);
+            _fit.localScale = Vector3.one;
 
             _scale = k;
             _design = design;
