@@ -27,7 +27,11 @@ write commit messages and release notes to a file (UTF-8 without BOM) and use `-
 
 ## First in-game runs (2026-11-10, 3440x1440, Joel's home machine, H:\SPT4.1.X)
 
-- 0.1.2: column correct place, but the inventory was widened by an ultrawide mod (canvas 2580
+- 0.1.2: column correct place, but the inventory was widened by UIScale Reloaded
+  (com.vonbraunz.uiscale.reloaded, InventoryStretchPatch per its strings: LeftSide 12 from the
+  left, stretched up to Stash Panel, Stash Panel 680 anchored right; at 16:9 LeftSide is 12..1218,
+  7 units narrower than vanilla, and a long special-slot row clips at its own edge, not ours.
+  Joel's own Ultrawide Stash Probe widens stash panels, not this raid view) (canvas 2580
   units, LeftSide 1866, **Left Panel 930.5** wide, Stash Panel still 680). The panel was laid out
   at Left Panel's size and shrunk to 0.731, pinned top: short and small. 0.1.3 lays it out at the
   column's height and min(Left Panel, column) width, always scale 1 (`Rules.PanelLayoutSize`).
