@@ -6,7 +6,7 @@
 there, right beside your loadout. No more switching to the Health tab just to see a body part's
 HP or what's bleeding.
 
-![Healthy Inventory: the health panel beside the rig, pockets and backpack in raid](docs/images/health-column.png)
+![Healthy Inventory: the health panel beside the rig, pockets and backpack in raid](https://raw.githubusercontent.com/JoelHauser/healthyinventory/main/docs/images/health-column.png)
 
 ## What it does
 
