@@ -9,7 +9,9 @@ was taken.
 ## State
 
 0.1.0 built 2026-11-10 on the work machine against a mirror (below). 0.1.2-0.1.4 run in game on
-2026-11-10 (see "First in-game runs"); 0.1.5 installed in H:\SPT4.1.X, not yet run.
+2026-11-10 (see "First in-game runs"); 0.1.5 run in game the same day and released as **1.0.0**
+(GitHub release `v1.0.0`, code identical to 0.1.5 but the version) once Joel called it tested.
+Fika and CutContent were never run with it; the README says so.
 Verified outside the game: 0-warning build, 113 xunit tests (138 from 0.1.2) (decision table, prefab geometry at 14
 screen sizes, metadata of the patched assembly), and tools/PatchHarness in the game's own mono
 runtime (all four patches apply with BepInEx's Harmony 2.9; decision glue on real controller types

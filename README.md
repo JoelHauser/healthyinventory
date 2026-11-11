@@ -50,18 +50,10 @@ Open the in-game configuration manager with **F12**.
 - **Mods that rebuild the inventory layout:** if the panels aren't where the game normally puts
   them, Healthy Inventory leaves the inventory vanilla and writes a warning to the log.
 
-## Status
+## Feedback
 
-**Pre-release (0.1.5).**
-
-- **Tested in game:** the layout at 3440x1440 and 2560x1440, switching between the Gear and Health
-  tabs, resizing the window with the inventory open, and out-of-raid screens staying vanilla.
-- **Still being tested:** looting, treating wounds by drag and drop, live updates while the
-  inventory is open, death and extraction with the inventory open, scav raids, and other
-  resolutions.
-
-The full checklist is in [docs/TEST-PLAN.md](docs/TEST-PLAN.md). Found a problem? Open an issue and
-attach `BepInEx/LogOutput.log`.
+Found a problem? [Open an issue](https://github.com/JoelHauser/healthyinventory/issues) and attach
+`BepInEx/LogOutput.log`.
 
 ## How it works
 

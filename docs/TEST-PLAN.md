@@ -1,7 +1,6 @@
 # Healthy Inventory: in-game test plan
 
-Version 0.1.5. Sections A (row 1) and B (layout, at 3440x1440) were partly run on 0.1.2-0.1.4;
-re-check B on 0.1.5, especially the first open of a session. Numbers in
+Written for 0.1.5 (released as 1.0.0 with the same code). Numbers in
 brackets refer to the brief's eight validation points.
 
 ## Setup
